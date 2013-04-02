@@ -23,3 +23,6 @@ _testmain.go
 
 # Only include the source of the manpage.
 man/evalgd.1*
+
+# Binaries
+evalgd
