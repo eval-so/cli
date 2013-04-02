@@ -12,7 +12,9 @@ import (
 
 var (
 	action   = flag.String("action", "evaluate", "What should I do?")
-	language = flag.String("language", "", "Language to evaluate")
+	language = flag.String("language", "", "Language to evaluate.")
+	debug    = flag.Bool("debug", false, "Print debugging output?")
+	server   = flag.String("server", "http://eval.gd", "API server to evaluate against.")
 )
 
 func usage() {
@@ -20,6 +22,12 @@ func usage() {
 	fmt.Fprintf(os.Stderr, "Defaults are:\n")
 	flag.PrintDefaults()
 	os.Exit(2)
+}
+
+func printDebug(message string)  {
+	if *debug {
+		fmt.Printf("[\x1b[33;1mDEBUG\x1b[0m] %s\n", message)
+	}
 }
 
 func main() {
@@ -30,7 +38,7 @@ func main() {
 		flag.Usage()
 	}
 
-	fmt.Println("Requesting evaluation...")
+	printDebug("Requesting evaluation...")
 	code, _ := ioutil.ReadAll(os.Stdin)
 	e := Evaluation{
 		Language: *language,
@@ -55,7 +63,7 @@ func evaluate(e Evaluation) (string, int) {
 	jsonQuery, _ := json.Marshal(e)
 	query := bytes.NewBuffer(jsonQuery)
 	resp, _ := http.Post(
-		"http://eval.gd/jsontest",
+		fmt.Sprintf("%s/jsontest", *server),
 		"application/json",
 		query)
 	defer resp.Body.Close()
