@@ -6,6 +6,7 @@ import (
 	"flag"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"net/url"
 	"os"
@@ -25,10 +26,18 @@ func usage() {
 	os.Exit(2)
 }
 
-func printDebug(message string)  {
+func printDebug(message string) {
 	if *debug {
-		fmt.Printf("[\x1b[33;1mDEBUG\x1b[0m] %s\n", message)
+		log.Printf("[\x1b[33;1mDEBUG\x1b[0m] %s\n", message)
 	}
+}
+
+func printFatal(message string) {
+	log.Fatal(fmt.Sprintf("[\x1b[31;1mERROR\x1b[0m] %s\n", message))
+}
+
+func printOkay(message string) {
+	log.Printf("[\x1b[32;1mOKAY\x1b[0m] %s\n", message)
 }
 
 func main() {
@@ -61,12 +70,29 @@ type Evaluation struct {
 }
 
 func evaluate(e Evaluation) (string, int) {
-	jsonQuery, _ := json.Marshal(e)
+	jsonQuery, err := json.Marshal(e)
+	if err != nil {
+		printFatal("Error converting request into valid JSON.")
+	}
+	printDebug(fmt.Sprintf("JSON Query: %s", jsonQuery))
+
 	query := bytes.NewBuffer(jsonQuery)
-	parsedServer, _ := url.Parse(*server)
-	printDebug(parsedServer.String())
-	resp, _ := http.Post(parsedServer.String(), "application/json", query)
+
+	parsedServer, err := url.Parse(*server)
+	if err != nil {
+		printFatal("Could not parse given server URL.")
+	}
+
+	resp, err := http.Post(parsedServer.String(), "application/json", query)
+	if err != nil {
+		printFatal("Could not successfully POST the query to the server.")
+	}
+
 	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		printFatal("Could not read the response from the server.")
+	}
+
 	return string(body), resp.StatusCode
 }
