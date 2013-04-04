@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"os"
 )
 
@@ -14,7 +15,7 @@ var (
 	action   = flag.String("action", "evaluate", "What should I do?")
 	language = flag.String("language", "", "Language to evaluate.")
 	debug    = flag.Bool("debug", false, "Print debugging output?")
-	server   = flag.String("server", "http://eval.so", "API server to evaluate against.")
+	server   = flag.String("server", "http://eval.so/jsontest", "API server to evaluate against.")
 )
 
 func usage() {
@@ -62,10 +63,9 @@ type Evaluation struct {
 func evaluate(e Evaluation) (string, int) {
 	jsonQuery, _ := json.Marshal(e)
 	query := bytes.NewBuffer(jsonQuery)
-	resp, _ := http.Post(
-		fmt.Sprintf("%s/jsontest", *server),
-		"application/json",
-		query)
+	parsedServer, _ := url.Parse(*server)
+	printDebug(parsedServer.String())
+	resp, _ := http.Post(parsedServer.String(), "application/json", query)
 	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 	return string(body), resp.StatusCode
