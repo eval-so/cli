@@ -14,11 +14,11 @@ var (
 	action   = flag.String("action", "evaluate", "What should I do?")
 	language = flag.String("language", "", "Language to evaluate.")
 	debug    = flag.Bool("debug", false, "Print debugging output?")
-	server   = flag.String("server", "http://eval.gd", "API server to evaluate against.")
+	server   = flag.String("server", "http://eval.so", "API server to evaluate against.")
 )
 
 func usage() {
-	fmt.Fprintf(os.Stderr, "Usage: evalgd [flags]\n")
+	fmt.Fprintf(os.Stderr, "Usage: evalso [flags]\n")
 	fmt.Fprintf(os.Stderr, "Defaults are:\n")
 	flag.PrintDefaults()
 	os.Exit(2)
