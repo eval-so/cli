@@ -58,7 +58,7 @@ func main() {
 	result, statusCode := evaluate(e)
 
 	if statusCode != 200 {
-		fmt.Printf("[\x1b[31;1mError\x1b[0m] HTTP Code %d\n", statusCode)
+		printFatal(fmt.Sprintf("HTTP Code %d", statusCode))
 	} else {
 		fmt.Println(string(result))
 	}
