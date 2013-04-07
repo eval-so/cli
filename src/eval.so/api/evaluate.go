@@ -15,10 +15,10 @@ type Evaluation struct {
 }
 
 type EvaluationResult struct {
-	Stdout string `json:"stdout"`
-	Stderr string `json:"stderr"`
-	Walltime int `json:"wallTime"`
-	Exitcode int `json:"exitCode"`
+	Stdout   string `json:"stdout"`
+	Stderr   string `json:"stderr"`
+	Walltime int    `json:"wallTime"`
+	Exitcode int    `json:"exitCode"`
 }
 
 func Evaluate(server string, e Evaluation) (EvaluationResult, int) {
