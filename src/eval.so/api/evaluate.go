@@ -14,7 +14,14 @@ type Evaluation struct {
 	Code     string `json:"code"`
 }
 
-func Evaluate(server string, e Evaluation) (string, int) {
+type EvaluationResult struct {
+	Stdout string `json:"stdout"`
+	Stderr string `json:"stderr"`
+	Walltime int `json:"wallTime"`
+	Exitcode int `json:"exitCode"`
+}
+
+func Evaluate(server string, e Evaluation) (EvaluationResult, int) {
 	jsonQuery, err := json.Marshal(e)
 	if err != nil {
 		util.PrintFatal("Error converting request into valid JSON.")
@@ -39,5 +46,11 @@ func Evaluate(server string, e Evaluation) (string, int) {
 		util.PrintFatal("Could not read the response from the server.")
 	}
 
-	return string(body), resp.StatusCode
+	var result EvaluationResult
+	err = json.Unmarshal(body, &result)
+	if err != nil {
+		util.PrintFatal("Error decoding JSON response from the server.")
+	}
+
+	return result, resp.StatusCode
 }

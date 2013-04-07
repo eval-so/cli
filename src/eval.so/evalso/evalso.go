@@ -2,10 +2,10 @@ package main
 
 import (
 	"eval.so/api"
+	"eval.so/util"
 	"flag"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"os"
 )
 
@@ -23,20 +23,6 @@ func usage() {
 	os.Exit(2)
 }
 
-func printDebug(message string) {
-	if *debug {
-		log.Printf("[\x1b[33;1mDEBUG\x1b[0m] %s\n", message)
-	}
-}
-
-func printFatal(message string) {
-	log.Fatal(fmt.Sprintf("[\x1b[31;1mERROR\x1b[0m] %s\n", message))
-}
-
-func printOkay(message string) {
-	log.Printf("[\x1b[32;1mOKAY\x1b[0m] %s\n", message)
-}
-
 func main() {
 	flag.Usage = usage
 	flag.Parse()
@@ -45,7 +31,7 @@ func main() {
 		flag.Usage()
 	}
 
-	printDebug("Requesting evaluation...")
+	util.PrintDebug("Requesting evaluation...")
 	code, _ := ioutil.ReadAll(os.Stdin)
 	e := evaluate.Evaluation{
 		Language: *language,
@@ -55,8 +41,15 @@ func main() {
 	result, statusCode := evaluate.Evaluate(*server, e)
 
 	if statusCode != 200 {
-		printFatal(fmt.Sprintf("HTTP Code %d", statusCode))
+		util.PrintFatal(fmt.Sprintf("HTTP Code %d", statusCode))
 	} else {
-		fmt.Println(string(result))
+		fmt.Println("[\x1b[32;1mSTDOUT\x1b[0m]")
+		fmt.Println(result.Stdout)
+
+		fmt.Println("[\x1b[32;1mSTDERR\x1b[0m]")
+		fmt.Println(result.Stderr)
+
+		fmt.Println("[\x1b[32;1mWall Time\x1b[0m]")
+		fmt.Printf("%dms\n", result.Walltime)
 	}
 }
