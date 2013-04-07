@@ -23,6 +23,17 @@ func usage() {
 	os.Exit(2)
 }
 
+func printResult(result evaluate.EvaluationResult) {
+	fmt.Println("[\x1b[32;1mSTDOUT\x1b[0m]")
+	fmt.Println(result.Stdout)
+
+	fmt.Println("[\x1b[32;1mSTDERR\x1b[0m]")
+	fmt.Println(result.Stderr)
+
+	fmt.Println("[\x1b[32;1mWall Time\x1b[0m]")
+	fmt.Printf("%dms\n", result.Walltime)
+}
+
 func main() {
 	flag.Usage = usage
 	flag.Parse()
@@ -43,13 +54,11 @@ func main() {
 	if statusCode != 200 {
 		util.PrintFatal(fmt.Sprintf("HTTP Code %d", statusCode))
 	} else {
-		fmt.Println("[\x1b[32;1mSTDOUT\x1b[0m]")
-		fmt.Println(result.Stdout)
-
-		fmt.Println("[\x1b[32;1mSTDERR\x1b[0m]")
-		fmt.Println(result.Stderr)
-
-		fmt.Println("[\x1b[32;1mWall Time\x1b[0m]")
-		fmt.Printf("%dms\n", result.Walltime)
+		if result.CompilationResult != nil {
+			fmt.Println("---------- Compilation ----------")
+			printResult(*result.CompilationResult)
+			fmt.Println("----------  Execution  ----------")
+		}
+		printResult(result)
 	}
 }

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"eval.so/util"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -15,10 +16,11 @@ type Evaluation struct {
 }
 
 type EvaluationResult struct {
-	Stdout   string `json:"stdout"`
-	Stderr   string `json:"stderr"`
-	Walltime int    `json:"wallTime"`
-	Exitcode int    `json:"exitCode"`
+	Stdout            string            `json:"stdout"`
+	Stderr            string            `json:"stderr"`
+	Walltime          int               `json:"wallTime"`
+	Exitcode          int               `json:"exitCode"`
+	CompilationResult *EvaluationResult `json:"compilationResult"`
 }
 
 func Evaluate(server string, e Evaluation) (EvaluationResult, int) {
@@ -45,6 +47,8 @@ func Evaluate(server string, e Evaluation) (EvaluationResult, int) {
 	if err != nil {
 		util.PrintFatal("Could not read the response from the server.")
 	}
+
+	util.PrintDebug(fmt.Sprintf("JSON Response: %s", string(body)))
 
 	var result EvaluationResult
 	err = json.Unmarshal(body, &result)
