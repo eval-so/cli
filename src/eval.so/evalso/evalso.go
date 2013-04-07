@@ -13,7 +13,7 @@ var (
 	action   = flag.String("action", "evaluate", "What should I do?")
 	language = flag.String("language", "", "Language to evaluate.")
 	debug    = flag.Bool("debug", false, "Print debugging output?")
-	server   = flag.String("server", "http://eval.so/jsontest", "API server to evaluate against.")
+	server   = flag.String("server", "http://eval.so/api/v1/evaluate", "API server to evaluate against.")
 )
 
 func usage() {
