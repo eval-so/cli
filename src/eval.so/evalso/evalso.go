@@ -60,5 +60,6 @@ func main() {
 			fmt.Println("----------  Execution  ----------")
 		}
 		printResult(result)
+		os.Exit(result.Exitcode)
 	}
 }
