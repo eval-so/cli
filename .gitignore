@@ -21,6 +21,9 @@ _cgo_export.*
 
 _testmain.go
 
+# Ignore the evalso binary. Matches ./evalso but not ./src/eval.so/evalso
+/evalso
+
 *.exe
 
 # Only include the source of the manpage.
